@@ -1,6 +1,7 @@
 import { Form, Card, Space, Input, Button, Alert } from "antd";
 import { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+// import { gql, useMutation } from "@apollo/client";
+import { register } from "../services/user.service";
 
 const Register = (props) => {
   //   const { getFieldDecorator } = props.form;
@@ -13,39 +14,46 @@ const Register = (props) => {
   const [family, setFamily] = useState("");
   const [email, setEmail] = useState("");
 
-  const REGISTER_USER = gql`
-    mutation NewUser($user: UserInput!) {
-      newUser(user: $user) {
-        _id
-      }
-    }
-  `;
-
-  const [registerUser, { loading, error }] = useMutation(REGISTER_USER);
-  if (loading) console.log("Is loading...");
-  if (error) console.log(`Error ${error}`);
+  // const [registerUser, { loading, error }] = useMutation(REGISTER_USER);
+  // if (loading) console.log("Is loading...");
+  // if (error) console.log(`Error ${error}`);
 
   const handleRegister = (e) => {
     console.log("register...");
     e.preventDefault();
     if (password === repPassword)
-      registerUser({
-        variables: {
-          user: {
-            _id: "",
-            name,
-            family,
-            userName,
-            password,
-            email,
-            role: null,
-          },
+      register({
+        user: {
+          _id: "",
+          name,
+          family,
+          userName,
+          password,
+          email,
+          role: null,
         },
       }).then(({ data }) => {
         console.log(data);
         setSuccessMsg("ثبت نام با موفقیت انجام شد");
         setErrMsg("");
       });
+    // registerUser({
+    //   variables: {
+    //     user: {
+    //       _id: "",
+    //       name,
+    //       family,
+    //       userName,
+    //       password,
+    //       email,
+    //       role: null,
+    //     },
+    //   },
+    // }).then(({ data }) => {
+    //   console.log(data);
+    //   setSuccessMsg("ثبت نام با موفقیت انجام شد");
+    //   setErrMsg("");
+    // });
     else {
       setErrMsg("رمز عبور و تکرار آن برابر نمی باشد");
       setSuccessMsg("");
@@ -90,6 +98,7 @@ const Register = (props) => {
           </Form.Item>
           <Form.Item>
             <Input
+              type="email"
               placeholder="ایمیل"
               onChange={(e) => setEmail(e.target.value)}
             />

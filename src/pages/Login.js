@@ -1,24 +1,26 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLazyQuery, gql } from "@apollo/client";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Space, Card, Input, Button, Alert, Checkbox } from "antd";
+// import { useLazyQuery, gql, ApolloClient } from "@apollo/client";
+import { validation } from "../services/user.service";
 
-const Login = () => {
+const Login = (props) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [checked, setChecked] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const VALIDATE_USER = gql`
-    query ValidateUser($UserName: String!, $Password: String!) {
-      validateUser(userName: $UserName, password: $Password)
-    }
-  `;
+  // const VALIDATE_USER = gql`
+  //   query ValidateUser($UserName: String!, $Password: String!) {
+  //     validateUser(userName: $UserName, password: $Password)
+  //   }
+  // `;
 
-  const [validateUser, { loading, error }] = useLazyQuery(VALIDATE_USER);
-  if (loading) console.log("Is loading...");
-  if (error) console.log(`Error ${error}`);
+  // const [validateUser, { loading, error }] = useLazyQuery(VALIDATE_USER);
+  // if (loading) console.log("Is loading...");
+  // if (error) console.log(`Error ${error}`);
 
   const handleLogin = () => {
     // const { data } = await validateUser({
@@ -31,13 +33,12 @@ const Login = () => {
     // if (data.validateUser) navigate("/Cartable");
     // else setErrMsg("نام کاربری یا رمز عبور اشتباه می باشد");
 
-    validateUser({
-      variables: {
-        UserName: userName,
-        Password: password,
-      },
+    validation({
+      UserName: userName,
+      Password: password,
     }).then(({ data }) => {
-      if (data.validateUser) {
+      if (data.validateUser !== "") {
+        localStorage.setItem("token", data.validateUser);
         const today = new Date();
         var expire = new Date();
         if (!checked) expire.setTime(today.getTime() + 3600000 * 24 * 15);
@@ -49,9 +50,33 @@ const Login = () => {
           ";path=/" +
           ";expires=" +
           expire.toUTCString();
-        navigate("/Cartable");
+
+        const prevLocation = location.state.from.pathname;
+        prevLocation ? navigate(prevLocation) : navigate("/Cartable");
       } else setErrMsg("نام کاربری یا رمز عبور اشتباه می باشد");
     });
+
+    // validateUser({
+    //   variables: {
+    //     UserName: userName,
+    //     Password: password,
+    //   },
+    // }).then(({ data }) => {
+    //   if (data.validateUser !== "") {
+    //     const today = new Date();
+    //     var expire = new Date();
+    //     if (!checked) expire.setTime(today.getTime() + 3600000 * 24 * 15);
+    //     else expire.setTime(today.getTime() + 3600000 * 365 * 15);
+
+    //     document.cookie =
+    //       "userName=" +
+    //       userName +
+    //       ";path=/" +
+    //       ";expires=" +
+    //       expire.toUTCString();
+    //     navigate("/Cartable");
+    //   } else setErrMsg("نام کاربری یا رمز عبور اشتباه می باشد");
+    // });
   };
   return (
     <Card

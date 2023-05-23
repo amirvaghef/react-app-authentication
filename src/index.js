@@ -5,23 +5,23 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ConfigProvider } from "antd";
 import faIR from "antd/locale/fa_IR";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+// import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { BrowserRouter } from "react-router-dom";
 
-const client = new ApolloClient({
-  uri: "http://localhost:4000/",
-  cache: new InMemoryCache(),
-});
+// const client = new ApolloClient({
+//   uri: "http://localhost:4000/",
+//   cache: new InMemoryCache(),
+// });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ConfigProvider direction="rtl" locale={faIR}>
-      <ApolloProvider client={client}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </ApolloProvider>
+      {/* <ApolloProvider client={client}> */}
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+      {/* </ApolloProvider> */}
     </ConfigProvider>
   </React.StrictMode>
 );
